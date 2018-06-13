@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 for (int i=entries.size()-1; i >= 0; i--) {
                     if (entries.get(i).getIsChecked()) {
+                        entries.get(i).setPrevDel(true);
                         entries.remove(entries.get(i));
                     }
                 }

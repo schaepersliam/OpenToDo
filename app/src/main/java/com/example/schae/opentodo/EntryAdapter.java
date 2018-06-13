@@ -3,6 +3,7 @@ package com.example.schae.opentodo;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,8 +41,17 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
         listItemView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                cb.setChecked(false);
-                cb.jumpDrawablesToCurrentState();
+                if (currentItem.getPrevDel()) {
+                    cb.setChecked(false);
+                    currentItem.setPrevDel(false);
+                    cb.jumpDrawablesToCurrentState();
+                } else {
+                    if (bottom != oldBottom) {
+                        Log.e("Test", "Here is the error");
+                        cb.setChecked(false);
+                        cb.jumpDrawablesToCurrentState();
+                    }
+                }
             }
         });
 
