@@ -1,49 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
+    android:background="@drawable/app_background"
     tools:context=".MainActivity">
 
+    <Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:id="@+id/toolbar"
+        android:layout_alignParentBottom="true" />
+
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="25dp"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="15sp"
+        android:layout_marginRight="25dp"
+        android:animateLayoutChanges="true"
+        android:layout_marginBottom="84dp"
+        android:layout_marginTop="25dp" />
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="25dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_gravity="center">
-
-        <EditText
-            android:layout_width="250dp"
-            android:layout_height="35dp"
-            android:id="@+id/todo_input_edittext"
-            android:hint="@string/todo_input"
-            android:inputType="text"
-            android:textSize="14sp"/>
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:layout_marginBottom="35dp">
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/todo_add"
-            android:id="@+id/todo_add_button"/>
+            android:text="Add new todo"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/rounded_button"
+            android:id="@+id/todo_add_button" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <ImageButton
+            android:layout_width="50dp"
             android:id="@+id/remove_button"
-            android:text="@string/todo_remove" />
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_button"
+            android:src="@drawable/delete_icon_material_io"/>
 
     </LinearLayout>
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:id="@+id/list_view"
-        android:layout_height="match_parent"/>
-
-</LinearLayout>
+</RelativeLayout>
