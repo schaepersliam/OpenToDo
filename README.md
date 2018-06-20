@@ -40,8 +40,9 @@ Before doing a pull request please check if you have done all of the following:
 ## Things ToDo
 Here are all things needed to do(you'll find them in the todo section in Android Studio too):
 
-- Update the UI(schaepersliam)
 - Add a saving function
+- Replace the ListView with a RecyclerView(SchaepersLiam)
+- Add new animations to the RecyclerView
 
 If you want to add something on the todo list just make a pull request with the updated README.
 The same goes for working on a todo. If you would like to work on a todo make a pull request and add your GitHub name
