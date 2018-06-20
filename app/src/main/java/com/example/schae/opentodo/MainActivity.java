@@ -1,5 +1,6 @@
 package com.example.schae.opentodo;
 
+import android.animation.LayoutTransition;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -35,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
         final Button add = findViewById(R.id.todo_add_button);
         final ImageButton remove = findViewById(R.id.remove_button);
 
+        final Animation fadeout = AnimationUtils.loadAnimation(MainActivity.this,android.R.anim.fade_out);
+        fadeout.setDuration(500);
+
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,9 +54,13 @@ public class MainActivity extends AppCompatActivity {
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        entries.add(new Entry(input_todo.getText().toString()));
-                        adapter.notifyDataSetChanged();
-                        AddDialog.dismiss();
+                        if (!input_todo.getText().toString().isEmpty()) {
+                            entries.add(new Entry(input_todo.getText().toString()));
+                            adapter.notifyDataSetChanged();
+                            AddDialog.dismiss();
+                        } else {
+                            Toast.makeText(MainActivity.this,"Please fill in a ToDo to continue!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 AddDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -60,12 +72,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 for (int i=entries.size()-1; i >= 0; i--) {
-                    if (entries.get(i).getIsChecked()) {
-                        entries.get(i).setPrevDel(true);
-                        entries.remove(entries.get(i));
+                    final int index = i;
+                    if (entries.get(index).getIsChecked()) {
+                        entries.get(index).setPrevDel(true);
+                        list_view.getChildAt(index).startAnimation(fadeout);
+                        list_view.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                entries.remove(entries.get(index));
+                                adapter.notifyDataSetChanged();
+                            }
+                        },fadeout.getDuration());
                     }
                 }
-                adapter.notifyDataSetChanged();
             }
         });
 
