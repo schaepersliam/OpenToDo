@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
     String input_text = "";
     Dialog AddDialog;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager rvLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +41,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final ArrayList<Entry> entries = new ArrayList<>();
-        final EntryAdapter adapter = new EntryAdapter(this, entries);
-        final ListView list_view = findViewById(R.id.list_view);
+        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(false);
+
+        rvLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(rvLayoutManager);
+
+        DividerItemDecoration itemDecor = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        itemDecor.setDrawable(recyclerView.getContext().getResources().getDrawable(R.drawable.divideritemdecoration));
+        recyclerView.addItemDecoration(itemDecor);
+
+        adapter = new EntryAdapter(entries);
+
         final Button add = findViewById(R.id.todo_add_button);
         final ImageButton remove = findViewById(R.id.remove_button);
 
@@ -56,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (!input_todo.getText().toString().isEmpty()) {
                             entries.add(new Entry(input_todo.getText().toString()));
-                            adapter.notifyDataSetChanged();
                             AddDialog.dismiss();
                         } else {
                             Toast.makeText(MainActivity.this,"Please fill in a ToDo to continue!", Toast.LENGTH_SHORT).show();
@@ -65,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 });
                 AddDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 AddDialog.show();
+                adapter.notifyDataSetChanged();
             }
         });
 
@@ -75,8 +91,8 @@ public class MainActivity extends AppCompatActivity {
                     final int index = i;
                     if (entries.get(index).getIsChecked()) {
                         entries.get(index).setPrevDel(true);
-                        list_view.getChildAt(index).startAnimation(fadeout);
-                        list_view.postDelayed(new Runnable() {
+                        recyclerView.getChildAt(index).startAnimation(fadeout);
+                        recyclerView.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 entries.remove(entries.get(index));
@@ -88,6 +104,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        list_view.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
     }
 }
