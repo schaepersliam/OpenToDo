@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         final ArrayList<Entry> entries = new ArrayList<>();
         recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(false);
+        recyclerView.setHasFixedSize(true);
 
         rvLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(rvLayoutManager);
@@ -58,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
 
         final Animation fadeout = AnimationUtils.loadAnimation(MainActivity.this,android.R.anim.fade_out);
         fadeout.setDuration(500);
+
+        RecyclerView.ItemAnimator animator = new DefaultItemAnimator();
+        animator.setAddDuration(500);
+        animator.setRemoveDuration(500);
+        recyclerView.setItemAnimator(animator);
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,14 +97,8 @@ public class MainActivity extends AppCompatActivity {
                     final int index = i;
                     if (entries.get(index).getIsChecked()) {
                         entries.get(index).setPrevDel(true);
-                        recyclerView.getChildAt(index).startAnimation(fadeout);
-                        recyclerView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                entries.remove(entries.get(index));
-                                adapter.notifyDataSetChanged();
-                            }
-                        },fadeout.getDuration());
+                        entries.remove(entries.get(index));
+                        adapter.notifyItemRemoved(index);
                     }
                 }
             }

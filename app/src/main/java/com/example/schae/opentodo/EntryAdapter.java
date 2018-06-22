@@ -57,7 +57,6 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
                     holder.mCheckBox.jumpDrawablesToCurrentState();
                 } else {
                     if (bottom != oldBottom) {
-                        Log.e("Test", "Here is the error");
                         holder.mCheckBox.setChecked(false);
                         holder.mCheckBox.jumpDrawablesToCurrentState();
                     }
