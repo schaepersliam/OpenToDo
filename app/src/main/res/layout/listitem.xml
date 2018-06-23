@@ -17,7 +17,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="#263238"
-                android:id="@+id/checkbox_linearlayout"
+                android:id="@+id/checkbox_linear_layout"
                 android:gravity="center_vertical">
 
                 <CheckBox
@@ -34,11 +34,11 @@
                 android:layout_height="match_parent"
                 android:background="#263238"
                 android:gravity="center"
-                android:layout_toEndOf="@id/checkbox_linearlayout">
+                android:layout_toEndOf="@id/checkbox_linear_layout">
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:id="@+id/entry_textview"
+                    android:id="@+id/entry_text_view"
                     android:layout_height="wrap_content"
                     android:textColor="#FFFFFF"
                     tools:text="Dies ist ein Test!"

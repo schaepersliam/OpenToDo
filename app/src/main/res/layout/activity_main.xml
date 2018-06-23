@@ -35,7 +35,7 @@
         <Button
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="Add new todo"
+            android:text="@string/add_new_todo"
             android:layout_marginEnd="20dp"
             android:background="@drawable/rounded_button"
             android:id="@+id/todo_add_button" />
@@ -45,7 +45,8 @@
             android:id="@+id/remove_button"
             android:layout_height="50dp"
             android:background="@drawable/rounded_button"
-            android:src="@drawable/delete_icon_material_io"/>
+            android:src="@drawable/delete_icon_material_io"
+            android:contentDescription="@string/remove_button_description" />
 
     </LinearLayout>
 

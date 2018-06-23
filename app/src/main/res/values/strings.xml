@@ -1,6 +1,10 @@
-<resources>
+<resources >
     <string name="app_name">OpenToDo</string>
     <string name="todo_input">Enter here please</string>
     <string name="todo_add">+</string>
     <string name="todo_remove">-</string>
+    <string name="remove_button_description">Remove button for ToDo\'s</string>
+    <string name="add_new_todo">Add new todo</string>
+    <string name="alert_dialog_hint_text">Enter here!</string>
+    <string name="add_button_text">Add</string>
 </resources>

@@ -7,15 +7,18 @@ public class Entry {
     private boolean mPrevDel = false;
 
     public String getText() {return mText;}
-    public String setText(String text) {return mText = text;}
 
     public boolean getIsChecked() {return mIsChecked; }
-    public boolean setIsChecked(boolean yon) {return mIsChecked = yon;}
+    public void setIsChecked(boolean yon) {
+        mIsChecked = yon;
+    }
 
     public boolean getPrevDel() { return mPrevDel; }
-    public boolean setPrevDel(boolean yon) { return mPrevDel = yon; }
+    public void setPrevDel(boolean yon) {
+        mPrevDel = yon;
+    }
 
-    public Entry(String text) {
+    Entry(String text) {
         mText = text;
     }
 }

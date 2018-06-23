@@ -1,40 +1,26 @@
 package com.example.schae.opentodo;
 
-import android.animation.LayoutTransition;
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    String input_text = "";
     Dialog AddDialog;
-    private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager rvLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +28,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final ArrayList<Entry> entries = new ArrayList<>();
-        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
 
-        rvLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager rvLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(rvLayoutManager);
 
         DividerItemDecoration itemDecor = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
@@ -69,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 AddDialog.setContentView(R.layout.custom_alertdialog_add_todo);
                 AddDialog.setTitle("Add new ToDo");
                 Button add = AddDialog.findViewById(R.id.dialog_add_todo);
-                final EditText input_todo = AddDialog.findViewById(R.id.todo_input_edittext);
+                final EditText input_todo = AddDialog.findViewById(R.id.todo_input_edit_text);
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -81,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-                AddDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                Objects.requireNonNull(AddDialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 AddDialog.show();
                 adapter.notifyDataSetChanged();
             }
@@ -91,11 +77,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 for (int i=entries.size()-1; i >= 0; i--) {
-                    final int index = i;
-                    if (entries.get(index).getIsChecked()) {
-                        entries.get(index).setPrevDel(true);
-                        entries.remove(entries.get(index));
-                        adapter.notifyItemRemoved(index);
+                    if (entries.get(i).getIsChecked()) {
+                        entries.get(i).setPrevDel(true);
+                        entries.remove(entries.get(i));
+                        adapter.notifyItemRemoved(i);
                     }
                 }
             }
