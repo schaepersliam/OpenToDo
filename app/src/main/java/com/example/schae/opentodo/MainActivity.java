@@ -57,9 +57,6 @@ public class MainActivity extends AppCompatActivity {
         final Button add = findViewById(R.id.todo_add_button);
         final ImageButton remove = findViewById(R.id.remove_button);
 
-        final Animation fadeout = AnimationUtils.loadAnimation(MainActivity.this,android.R.anim.fade_out);
-        fadeout.setDuration(500);
-
         RecyclerView.ItemAnimator animator = new DefaultItemAnimator();
         animator.setAddDuration(500);
         animator.setRemoveDuration(500);

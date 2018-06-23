@@ -66,7 +66,11 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
 
         String text = currentItem.getText();
 
-        holder.mTextView.setText(text);
+        if(text.length() > 75) {
+            String long_text = text.substring(0,75);
+            String dots = "...";
+            holder.mTextView.setText(long_text + dots);
+        } else {holder.mTextView.setText(text);}
         holder.mCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,6 +89,7 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
         if (position > lastPosition)
         {
             Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
+            animation.setDuration(750);
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
         }
