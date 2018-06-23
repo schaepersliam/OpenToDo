@@ -50,4 +50,16 @@
 
     </LinearLayout>
 
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/toolbar"
+        android:layout_alignParentEnd="true"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_done_all_black_24dp"
+        android:contentDescription="@string/clear_all_todos_text"
+        android:layout_marginEnd="10dp"
+        android:id="@+id/clear_all_todos"
+        android:layout_marginBottom="10dp"/>
+
 </RelativeLayout>

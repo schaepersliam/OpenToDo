@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         final Button add = findViewById(R.id.todo_add_button);
         final ImageButton remove = findViewById(R.id.remove_button);
+        final ImageButton all_done = findViewById(R.id.clear_all_todos);
 
         RecyclerView.ItemAnimator animator = new DefaultItemAnimator();
         animator.setAddDuration(500);
@@ -83,6 +84,17 @@ public class MainActivity extends AppCompatActivity {
                         adapter.notifyItemRemoved(i);
                     }
                 }
+            }
+        });
+
+        all_done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(int i =entries.size() - 1; i >=0; i--) {
+                    entries.remove(entries.get(i));
+                    adapter.notifyItemRemoved(i);
+                }
+                Toast.makeText(MainActivity.this, "All ToDo's removed!", Toast.LENGTH_SHORT).show();
             }
         });
 
