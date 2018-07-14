@@ -18,6 +18,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name=".data.ContentProvider"
+            android:authorities="com.example.schae.opentodo"
+            android:exported="false" />
     </application>
 
 </manifest>
