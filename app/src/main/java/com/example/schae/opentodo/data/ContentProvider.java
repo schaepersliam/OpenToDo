@@ -30,7 +30,7 @@ public class ContentProvider extends android.content.ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor cursor = null;
 
@@ -47,7 +47,7 @@ public class ContentProvider extends android.content.ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
-
+        cursor.setNotificationUri(getContext().getContentResolver(),uri);
         return cursor;
     }
 
@@ -70,6 +70,7 @@ public class ContentProvider extends android.content.ContentProvider {
         switch (match) {
             case ALL:
                 return insertPet(uri,values);
+
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
         }
@@ -78,17 +79,26 @@ public class ContentProvider extends android.content.ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int rowsDeleted;
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case ALL:
-                return db.delete(Contract.Entry.TABLE_NAME,selection,selectionArgs);
+                rowsDeleted = db.delete(Contract.Entry.TABLE_NAME,selection,selectionArgs);
+                break;
             case SINGLE:
-                selection = Contract.Entry._ID + "=?";
+                if (selection == null) {
+                    selection = Contract.Entry._ID + "=?";
+                }
                 selectionArgs = new String[] {uri.toString()};
-                return db.delete(Contract.Entry.TABLE_NAME,selection,selectionArgs);
+                rowsDeleted = db.delete(Contract.Entry.TABLE_NAME,selection,selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
         }
+        if (rowsDeleted != 0){
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
+        return rowsDeleted;
     }
 
     @Override
@@ -103,7 +113,11 @@ public class ContentProvider extends android.content.ContentProvider {
         if (values.size() == 0) {
             return 0;
         }
-        return db.update(Contract.Entry.TABLE_NAME,values,selection,selectionArgs);
+        int rowsUpdated = db.update(Contract.Entry.TABLE_NAME,values,selection,selectionArgs);
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
+        return rowsUpdated;
     }
 
     private Uri insertPet(Uri uri, ContentValues values) {
@@ -117,6 +131,7 @@ public class ContentProvider extends android.content.ContentProvider {
             Log.e("Error: ","Failed to insert row for " + uri);
             return null;
         }
+        getContext().getContentResolver().notifyChange(uri,null);
         return ContentUris.withAppendedId(uri,id);
     }
 }

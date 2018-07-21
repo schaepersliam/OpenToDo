@@ -16,6 +16,12 @@ public class Contract {
         public static final String TABLE_NAME = "entrys";
         public static final String _ID = BaseColumns._ID;
         public static final String COLUMN_TODO = "todo";
+        public static final String COLUMN_CHECKBOX = "checkbox";
+
+        public static final int COLUMN_CHECKBOX_CHECKED = 1;
+        public static final int COLUMN_CHECKBOX_UNCHECKED = 0;
+
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_TODO);
 
         public static final String CONTENT_LIST_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TODO;
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TODO;
