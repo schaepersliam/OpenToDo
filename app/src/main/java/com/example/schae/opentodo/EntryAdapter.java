@@ -1,15 +1,11 @@
 package com.example.schae.opentodo;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -19,9 +15,6 @@ import com.example.schae.opentodo.data.ItemInfo;
 import java.util.ArrayList;
 
 public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> {
-
-    private int lastPosition = -1;
-    private Context context;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView mTextView;
@@ -43,7 +36,6 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
     @Override
     public EntryAdapter.ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.listitem,parent,false);
-        context = parent.getContext();
         return new ViewHolder(view);
     }
 

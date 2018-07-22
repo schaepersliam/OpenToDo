@@ -10,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.Objects;
+
 public class ContentProvider extends android.content.ContentProvider {
 
     private SQLiteHelper mDbHelper;
@@ -30,9 +32,9 @@ public class ContentProvider extends android.content.ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor cursor = null;
+        Cursor cursor;
 
         int match = sUriMatcher.match(uri);
         switch (match) {
@@ -47,7 +49,7 @@ public class ContentProvider extends android.content.ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
-        cursor.setNotificationUri(getContext().getContentResolver(),uri);
+        cursor.setNotificationUri(Objects.requireNonNull(getContext()).getContentResolver(),uri);
         return cursor;
     }
 
@@ -69,7 +71,9 @@ public class ContentProvider extends android.content.ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case ALL:
-                return insertPet(uri,values);
+                if (values != null) {
+                    return insertPet(uri,values);
+                }
 
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
@@ -96,7 +100,7 @@ public class ContentProvider extends android.content.ContentProvider {
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
         }
         if (rowsDeleted != 0){
-            getContext().getContentResolver().notifyChange(uri,null);
+            Objects.requireNonNull(getContext()).getContentResolver().notifyChange(uri,null);
         }
         return rowsDeleted;
     }
@@ -104,18 +108,18 @@ public class ContentProvider extends android.content.ContentProvider {
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        if(values.containsKey(Contract.Entry.COLUMN_TODO)) {
+        if (values != null && values.containsKey(Contract.Entry.COLUMN_TODO)) {
             String todo = values.getAsString(Contract.Entry.COLUMN_TODO);
             if (todo == null) {
                 throw new IllegalArgumentException("Todo requires a text");
             }
         }
-        if (values.size() == 0) {
+        if (values != null && values.size() == 0) {
             return 0;
         }
         int rowsUpdated = db.update(Contract.Entry.TABLE_NAME,values,selection,selectionArgs);
         if (rowsUpdated != 0) {
-            getContext().getContentResolver().notifyChange(uri,null);
+            Objects.requireNonNull(getContext()).getContentResolver().notifyChange(uri,null);
         }
         return rowsUpdated;
     }
@@ -131,7 +135,7 @@ public class ContentProvider extends android.content.ContentProvider {
             Log.e("Error: ","Failed to insert row for " + uri);
             return null;
         }
-        getContext().getContentResolver().notifyChange(uri,null);
+        Objects.requireNonNull(getContext()).getContentResolver().notifyChange(uri,null);
         return ContentUris.withAppendedId(uri,id);
     }
 }

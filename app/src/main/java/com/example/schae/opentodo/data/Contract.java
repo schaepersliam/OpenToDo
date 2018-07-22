@@ -9,7 +9,7 @@ public class Contract {
     private Contract() {}
 
     public static final String CONTENT_AUTHORITY = "com.example.schae.opentodo";
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String PATH_TODO = "todo";
 
     public static abstract class Entry implements BaseColumns {

@@ -1,42 +1,27 @@
 package com.example.schae.opentodo;
 
 import android.app.Dialog;
-import android.app.LoaderManager;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.schae.opentodo.data.Contract;
 import com.example.schae.opentodo.data.ItemInfo;
-import com.example.schae.opentodo.data.SQLiteHelper;
-import com.example.schae.opentodo.data.ToDoCursorAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import jp.wasabeef.recyclerview.animators.FadeInAnimator;
@@ -45,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
     Dialog AddDialog;
     private EntryAdapter adapter;
-    int LOADER = 1;
     public static ArrayList<ItemInfo> mList;
 
 
@@ -59,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             refreshList();
         }
 
-        final RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        final RecyclerView recyclerView = findViewById(R.id.recycler_view);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new EntryAdapter(mList);
@@ -108,12 +92,9 @@ public class MainActivity extends AppCompatActivity {
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int deletedRows = 0;
-                Uri currentUri;
                 for (int i=mList.size()-1; i>=0; i--) {
                     if (mList.get(i).getChecked()) {
-                        deletedRows = getContentResolver().delete(Contract.Entry.CONTENT_URI, Contract.Entry._ID + "=" + mList.get(i).getId(),null);
-                        currentUri = ContentUris.withAppendedId(Contract.Entry.CONTENT_URI,mList.get(i).getId());
+                        getContentResolver().delete(Contract.Entry.CONTENT_URI, Contract.Entry._ID + "=" + mList.get(i).getId(),null);
                         mList.get(i).setPrevRemoved(true);
                         mList.get(i).setChecked(false);
                         mList.remove(mList.get(i));
@@ -164,11 +145,16 @@ public class MainActivity extends AppCompatActivity {
 
         String[] projections = {Contract.Entry._ID};
         Cursor cursor = getContentResolver().query(Contract.Entry.CONTENT_URI,projections, null,null,null);
-        cursor.moveToLast();
-        int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Entry._ID));
-        int position = cursor.getPosition();
-        cursor.close();
-        mList.add(new ItemInfo(newRowId,id,todo,false,false,false));
+        int id = 0;
+        int position = 0;
+        if (cursor != null) {
+            cursor.moveToLast();
+            id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Entry._ID));
+            position = cursor.getPosition();
+            cursor.close();
+        }
+
+        mList.add(new ItemInfo(newRowId,id,todo,false,false));
         adapter.notifyItemInserted(position);
     }
 
@@ -176,11 +162,11 @@ public class MainActivity extends AppCompatActivity {
         String[] projections = {Contract.Entry._ID, Contract.Entry.COLUMN_TODO, Contract.Entry.COLUMN_CHECKBOX};
         Cursor cursor = getContentResolver().query(Contract.Entry.CONTENT_URI,projections,null,null,null);
 
-        int currentId = 0;
-        String currentText = null;
-        int currentCheckStateInt = 0;
+        int currentId;
+        String currentText;
+        int currentCheckStateInt;
         boolean currentCheckStateBool;
-        Uri currentUri = null;
+        Uri currentUri;
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
@@ -189,11 +175,9 @@ public class MainActivity extends AppCompatActivity {
                 currentCheckStateInt = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Entry.COLUMN_CHECKBOX));
                 currentUri = ContentUris.withAppendedId(Contract.Entry.CONTENT_URI,currentId);
 
-                if (currentCheckStateInt == 1) {
-                    currentCheckStateBool = true;
-                } else {currentCheckStateBool = false;}
+                currentCheckStateBool = currentCheckStateInt == 1;
 
-                mList.add(new ItemInfo(currentUri,currentId,currentText,currentCheckStateBool,false,false));
+                mList.add(new ItemInfo(currentUri,currentId,currentText,currentCheckStateBool,false));
             }
             cursor.close();
         }
