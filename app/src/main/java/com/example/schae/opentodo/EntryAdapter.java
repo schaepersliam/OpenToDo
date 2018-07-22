@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.example.schae.opentodo.data.ItemInfo;
@@ -50,38 +52,56 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull final EntryAdapter.ViewHolder holder, int position) {
         final ItemInfo currentItem = items.get(position);
 
-
         String text = currentItem.getText();
 
-        if(text.length() > 75) {
-            String long_text = text.substring(0,75);
-            holder.mTextView.setText(long_text + "...");
-        } else {holder.mTextView.setText(text);}
-        holder.mCheckBox.setOnClickListener(new View.OnClickListener() {
+        holder.mTextView.setText(text);
+        holder.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if (holder.mCheckBox.isChecked()) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
                     currentItem.setChecked(true);
-                } else {currentItem.setChecked(false);}
+                } else {
+                    currentItem.setChecked(false);
+                }
             }
         });
-        setAnimation(holder.itemView,position);
+
+        holder.itemView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (currentItem.getPrevRemoved()) {
+                    holder.mCheckBox.setChecked(false);
+                    currentItem.setPrevRemoved(false);
+                    holder.mCheckBox.jumpDrawablesToCurrentState();
+                } else {
+                    if (bottom != oldBottom) {
+                        if (currentItem.getChecked()) {
+                            holder.mCheckBox.setChecked(true);
+                            holder.mCheckBox.jumpDrawablesToCurrentState();
+                        } else {
+                            holder.mCheckBox.setChecked(false);
+                            holder.mCheckBox.jumpDrawablesToCurrentState();
+                        }
+
+                    }
+                }
+            }
+        });
     }
 
-
-    private void setAnimation(View viewToAnimate, int position)
-    {
-        if (position > lastPosition)
-        {
-            Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
-            animation.setDuration(750);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-        }
+    @Override
+    public void setHasStableIds(boolean hasStableIds) {
+        super.setHasStableIds(true);
     }
 
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    @Override
+    public long getItemId(int position)
+    {
+        return items.get(position).getId();
     }
 }

@@ -144,38 +144,4 @@ public class ToDoCursorAdapter extends RecyclerView.Adapter<ToDoCursorAdapter.Cu
             notifyDataSetChanged();
         }
     }
-
-
-    public class updateCheckbox extends Thread {
-
-        int id;
-        Uri currentUri;
-        CursorViewHolder holder;
-
-        updateCheckbox(Uri uri,int id,CursorViewHolder holder) {
-            this.id = id;
-            currentUri = uri;
-            this.holder = holder;
-        }
-
-        @Override
-        public void run() {
-            holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    holder.checkBox.setChecked(false);
-                    holder.checkBox.jumpDrawablesToCurrentState();
-                    ContentValues values = new ContentValues();
-                    if (isChecked) {
-                        holder.checkBox.setChecked(true);
-                        holder.checkBox.animate();
-                        values.put(Contract.Entry.COLUMN_CHECKBOX, Contract.Entry.COLUMN_CHECKBOX_CHECKED);
-                    } else {
-                        values.put(Contract.Entry.COLUMN_CHECKBOX, Contract.Entry.COLUMN_CHECKBOX_UNCHECKED);
-                    }
-                    mContext.getContentResolver().update(currentUri,values, Contract.Entry._ID + "=" + id,null);
-                }
-            });
-        }
-    }
 }

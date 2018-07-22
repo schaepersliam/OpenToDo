@@ -41,10 +41,10 @@ import java.util.Objects;
 
 import jp.wasabeef.recyclerview.animators.FadeInAnimator;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity {
 
     Dialog AddDialog;
-    private ToDoCursorAdapter adapter;
+    private EntryAdapter adapter;
     int LOADER = 1;
     public static ArrayList<ItemInfo> mList;
 
@@ -62,9 +62,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         final RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ToDoCursorAdapter(this,null);
+        adapter = new EntryAdapter(mList);
 
-        recyclerView.setHasFixedSize(false);
+        recyclerView.setHasFixedSize(true);
+        adapter.setHasStableIds(true);
 
         final Button add = findViewById(R.id.todo_add_button);
         final ImageButton remove = findViewById(R.id.remove_button);
@@ -74,12 +75,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         itemDecor.setDrawable(recyclerView.getContext().getResources().getDrawable(R.drawable.divideritemdecoration));
         recyclerView.addItemDecoration(itemDecor);
 
-        RecyclerView.ItemAnimator animator = new DefaultItemAnimator();
-        animator.setAddDuration(500);
-        animator.setRemoveDuration(500);
-
-
-        //@TODO Add new animations for insert and deletion and slide up
+        recyclerView.setItemAnimator(new FadeInAnimator());
+        recyclerView.getItemAnimator().setRemoveDuration(400);
+        recyclerView.getItemAnimator().setAddDuration(400);
+        recyclerView.getItemAnimator().setMoveDuration(400);
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 });
                 Objects.requireNonNull(AddDialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 AddDialog.show();
+                adapter.notifyDataSetChanged();
             }
         });
 
@@ -114,9 +114,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     if (mList.get(i).getChecked()) {
                         deletedRows = getContentResolver().delete(Contract.Entry.CONTENT_URI, Contract.Entry._ID + "=" + mList.get(i).getId(),null);
                         currentUri = ContentUris.withAppendedId(Contract.Entry.CONTENT_URI,mList.get(i).getId());
+                        mList.get(i).setPrevRemoved(true);
+                        mList.get(i).setChecked(false);
                         mList.remove(mList.get(i));
                         adapter.notifyItemRemoved(i);
-                        adapter.notifyItemRangeChanged(i,adapter.getItemCount());
                     }
                 }
                 //Just for testing
@@ -131,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 getContentResolver().notifyChange(Contract.Entry.CONTENT_URI,null);
                 Log.e("Deleted Rows: ","" + deletedRows);
                 for (int i=mList.size() -1;i>=0;i--) {
+                    mList.get(i).setPrevRemoved(true);
+                    mList.get(i).setChecked(false);
                     mList.remove(i);
                     adapter.notifyItemRemoved(i);
                 }
@@ -139,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         });
 
         recyclerView.setAdapter(adapter);
-        getLoaderManager().initLoader(LOADER,null,this);
     }
 
     @Override
@@ -166,9 +168,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Entry._ID));
         int position = cursor.getPosition();
         cursor.close();
-        mList.add(new ItemInfo(newRowId,id,todo,false,false));
-        adapter.notifyItemInserted(mList.size());
-        getContentResolver().notifyChange(newRowId,null);
+        mList.add(new ItemInfo(newRowId,id,todo,false,false,false));
+        adapter.notifyItemInserted(position);
     }
 
     public void refreshList() {
@@ -192,27 +193,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     currentCheckStateBool = true;
                 } else {currentCheckStateBool = false;}
 
-                mList.add(new ItemInfo(currentUri,currentId,currentText,currentCheckStateBool,false));
+                mList.add(new ItemInfo(currentUri,currentId,currentText,currentCheckStateBool,false,false));
             }
             cursor.close();
         }
         //Just for testing
         Log.i("List size:"," " + mList.size());
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this,Contract.Entry.CONTENT_URI,null,null,null,null);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        adapter.swapCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        adapter.swapCursor(null);
     }
 
 }
