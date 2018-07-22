@@ -2,6 +2,7 @@ package com.example.schae.opentodo;
 
 import android.app.Dialog;
 import android.app.LoaderManager;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
@@ -9,6 +10,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -37,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import jp.wasabeef.recyclerview.animators.FadeInAnimator;
+
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     Dialog AddDialog;
@@ -60,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ToDoCursorAdapter(this,null);
 
+        recyclerView.setHasFixedSize(false);
+
         final Button add = findViewById(R.id.todo_add_button);
         final ImageButton remove = findViewById(R.id.remove_button);
         final ImageButton all_done = findViewById(R.id.clear_all_todos);
@@ -68,12 +74,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         itemDecor.setDrawable(recyclerView.getContext().getResources().getDrawable(R.drawable.divideritemdecoration));
         recyclerView.addItemDecoration(itemDecor);
 
-        recyclerView.setHasFixedSize(true);
-
         RecyclerView.ItemAnimator animator = new DefaultItemAnimator();
         animator.setAddDuration(500);
         animator.setRemoveDuration(500);
-        recyclerView.setItemAnimator(animator);
+
 
         //@TODO Add new animations for insert and deletion and slide up
 
@@ -105,20 +109,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onClick(View v) {
                 int deletedRows = 0;
-                int updatedRow;
-                ContentValues values = new ContentValues();
-                for (int i=0;i<mList.size();i++) {
+                Uri currentUri;
+                for (int i=mList.size()-1; i>=0; i--) {
                     if (mList.get(i).getChecked()) {
-                        Log.e("Test","Succeeded!");
-                        values.put(Contract.Entry.COLUMN_CHECKBOX, Contract.Entry.COLUMN_CHECKBOX_CHECKED);
                         deletedRows = getContentResolver().delete(Contract.Entry.CONTENT_URI, Contract.Entry._ID + "=" + mList.get(i).getId(),null);
-                        adapter.notifyItemRemoved(deletedRows);
-                        mList.get(i).setRemoved(true);
-                    }
-                }
-                for (int i=mList.size() -1;i>=0;i--) {
-                    if (mList.get(i).getRemoved()) {
-                        mList.remove(i);
+                        currentUri = ContentUris.withAppendedId(Contract.Entry.CONTENT_URI,mList.get(i).getId());
+                        mList.remove(mList.get(i));
+                        adapter.notifyItemRemoved(i);
+                        adapter.notifyItemRangeChanged(i,adapter.getItemCount());
                     }
                 }
                 //Just for testing
@@ -130,9 +128,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onClick(View v) {
                 int deletedRows = getContentResolver().delete(Contract.Entry.CONTENT_URI,null,null);
+                getContentResolver().notifyChange(Contract.Entry.CONTENT_URI,null);
                 Log.e("Deleted Rows: ","" + deletedRows);
-                adapter.notifyItemRemoved(deletedRows);
-                mList.clear();
+                for (int i=mList.size() -1;i>=0;i--) {
+                    mList.remove(i);
+                    adapter.notifyItemRemoved(i);
+                }
                 Toast.makeText(MainActivity.this, "All ToDo's removed!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -157,14 +158,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         ContentValues values = new ContentValues();
         values.put(Contract.Entry.COLUMN_TODO, todo);
         Uri newRowId = getContentResolver().insert(Contract.Entry.CONTENT_URI,values);
-        getContentResolver().notifyChange(newRowId,null);
+
 
         String[] projections = {Contract.Entry._ID};
         Cursor cursor = getContentResolver().query(Contract.Entry.CONTENT_URI,projections, null,null,null);
         cursor.moveToLast();
         int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Entry._ID));
+        int position = cursor.getPosition();
         cursor.close();
         mList.add(new ItemInfo(newRowId,id,todo,false,false));
+        adapter.notifyItemInserted(mList.size());
+        getContentResolver().notifyChange(newRowId,null);
     }
 
     public void refreshList() {

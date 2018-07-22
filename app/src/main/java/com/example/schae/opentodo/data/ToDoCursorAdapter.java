@@ -115,6 +115,22 @@ public class ToDoCursorAdapter extends RecyclerView.Adapter<ToDoCursorAdapter.Cu
     }
 
     @Override
+    public void setHasStableIds(boolean hasStableIds) {
+        super.setHasStableIds(true);
+    }
+
+    private void setAnimation(View viewToAnimate, int position)
+    {
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
+            animation.setDuration(750);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
+
+    @Override
     public int getItemCount() {
         return (mCursor == null) ? 0 : mCursor.getCount();
     }
@@ -129,16 +145,6 @@ public class ToDoCursorAdapter extends RecyclerView.Adapter<ToDoCursorAdapter.Cu
         }
     }
 
-    private void setAnimation(View viewToAnimate, int position)
-    {
-        if (position > lastPosition)
-        {
-            Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
-            animation.setDuration(850);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-        }
-    }
 
     public class updateCheckbox extends Thread {
 

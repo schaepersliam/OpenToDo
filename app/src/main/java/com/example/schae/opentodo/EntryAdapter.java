@@ -12,6 +12,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.example.schae.opentodo.data.ItemInfo;
+
 import java.util.ArrayList;
 
 public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> {
@@ -29,9 +31,9 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
         }
     }
 
-    private ArrayList<Entry> items;
+    private ArrayList<ItemInfo> items;
 
-    EntryAdapter(ArrayList<Entry> entries_input) {
+    EntryAdapter(ArrayList<ItemInfo> entries_input) {
         items = entries_input;
     }
 
@@ -46,23 +48,8 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final EntryAdapter.ViewHolder holder, int position) {
-        final Entry currentItem = items.get(position);
+        final ItemInfo currentItem = items.get(position);
 
-        holder.itemView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                if (currentItem.getPrevDel()) {
-                    holder.mCheckBox.setChecked(false);
-                    currentItem.setPrevDel(false);
-                    holder.mCheckBox.jumpDrawablesToCurrentState();
-                } else {
-                    if (bottom != oldBottom) {
-                        holder.mCheckBox.setChecked(false);
-                        holder.mCheckBox.jumpDrawablesToCurrentState();
-                    }
-                }
-            }
-        });
 
         String text = currentItem.getText();
 
@@ -74,8 +61,8 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 if (holder.mCheckBox.isChecked()) {
-                    currentItem.setIsChecked(true);
-                } else {currentItem.setIsChecked(false);}
+                    currentItem.setChecked(true);
+                } else {currentItem.setChecked(false);}
             }
         });
         setAnimation(holder.itemView,position);
