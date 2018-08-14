@@ -1,20 +1,32 @@
 package com.example.schae.opentodo;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.schae.opentodo.data.Contract;
 import com.example.schae.opentodo.data.ItemInfo;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> {
+
+    private String LOG_TAG = EntryAdapter.class.getSimpleName();
+
+    private Dialog AddDialog;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView mTextView;
@@ -25,7 +37,6 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
             mCheckBox = itemView.findViewById(R.id.checkbox);
         }
     }
-
     private ArrayList<ItemInfo> items;
 
     EntryAdapter(ArrayList<ItemInfo> entries_input) {
@@ -41,7 +52,7 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull final EntryAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final EntryAdapter.ViewHolder holder, final int position) {
         final ItemInfo currentItem = items.get(position);
 
         String text = currentItem.getText();
@@ -77,6 +88,41 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
 
                     }
                 }
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.e(LOG_TAG,"A clicked has been noticed!");
+                AddDialog = new Dialog(holder.itemView.getContext());
+                AddDialog.setContentView(R.layout.custom_alertdialog_add_todo);
+                AddDialog.setTitle("Change ToDo");
+                Button change_button = AddDialog.findViewById(R.id.dialog_add_todo);
+                final EditText editText = AddDialog.findViewById(R.id.todo_input_edit_text);
+                change_button.setText("Change");
+                editText.setText(currentItem.getText());
+                editText.setSelection(currentItem.getText().length());
+                change_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ContentValues values = new ContentValues();
+                        values.put(Contract.Entry.COLUMN_TODO,editText.getText().toString());
+                        int updatedRow = holder.itemView.getContext().getContentResolver().update(currentItem.getUri(),values,null,null);
+                        if (updatedRow == 0) {
+                            Log.e(LOG_TAG,"Updating the item failed!");
+                        } else {
+                            Log.e(LOG_TAG,"Updating the item succeeded!");
+                        }
+                        items.get(holder.getAdapterPosition()).setText(editText.getText().toString());
+                        EntryAdapter.this.notifyItemChanged(holder.getAdapterPosition(), "payload " + holder.getAdapterPosition());
+                        AddDialog.dismiss();
+                    }
+                });
+
+                Objects.requireNonNull(AddDialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                AddDialog.show();
+                return true;
             }
         });
     }

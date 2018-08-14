@@ -18,6 +18,8 @@ public class ItemInfo {
         mPrevRemoved = removed;
     }
 
+    public void setText(String text) {mText = text;}
+
     public Uri getUri() {return mUri;}
     public int getId() {return mId; }
     public String getText() {return mText;}

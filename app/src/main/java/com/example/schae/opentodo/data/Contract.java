@@ -19,7 +19,6 @@ public class Contract {
         public static final String COLUMN_CHECKBOX = "checkbox";
 
         public static final int COLUMN_CHECKBOX_CHECKED = 1;
-        public static final int COLUMN_CHECKBOX_UNCHECKED = 0;
 
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_TODO);
 
