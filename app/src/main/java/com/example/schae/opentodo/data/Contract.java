@@ -17,6 +17,7 @@ public class Contract {
         public static final String _ID = BaseColumns._ID;
         public static final String COLUMN_TODO = "todo";
         public static final String COLUMN_CHECKBOX = "checkbox";
+        public static final String COLUMN_NOTE = "note";
 
         public static final int COLUMN_CHECKBOX_CHECKED = 1;
 

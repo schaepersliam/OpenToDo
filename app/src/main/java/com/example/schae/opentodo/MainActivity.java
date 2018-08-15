@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
     public void insertData(String todo) {
         ContentValues values = new ContentValues();
         values.put(Contract.Entry.COLUMN_TODO, todo);
+        values.put(Contract.Entry.COLUMN_NOTE, "");
         Uri newRowId = getContentResolver().insert(Contract.Entry.CONTENT_URI,values);
 
 
@@ -154,16 +155,17 @@ public class MainActivity extends AppCompatActivity {
             cursor.close();
         }
 
-        mList.add(new ItemInfo(newRowId,id,todo,false,false));
+        mList.add(new ItemInfo(newRowId,id,todo,"",false,false));
         adapter.notifyItemInserted(position);
     }
 
     public void refreshList() {
-        String[] projections = {Contract.Entry._ID, Contract.Entry.COLUMN_TODO, Contract.Entry.COLUMN_CHECKBOX};
+        String[] projections = {Contract.Entry._ID, Contract.Entry.COLUMN_TODO, Contract.Entry.COLUMN_CHECKBOX, Contract.Entry.COLUMN_NOTE};
         Cursor cursor = getContentResolver().query(Contract.Entry.CONTENT_URI,projections,null,null,null);
 
         int currentId;
         String currentText;
+        String currentNote;
         int currentCheckStateInt;
         boolean currentCheckStateBool;
         Uri currentUri;
@@ -174,10 +176,11 @@ public class MainActivity extends AppCompatActivity {
                 currentText = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Entry.COLUMN_TODO));
                 currentCheckStateInt = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Entry.COLUMN_CHECKBOX));
                 currentUri = ContentUris.withAppendedId(Contract.Entry.CONTENT_URI,currentId);
+                currentNote = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Entry.COLUMN_NOTE));
 
                 currentCheckStateBool = currentCheckStateInt == 1;
 
-                mList.add(new ItemInfo(currentUri,currentId,currentText,currentCheckStateBool,false));
+                mList.add(new ItemInfo(currentUri, currentId, currentText, currentNote, currentCheckStateBool,false));
             }
             cursor.close();
         }

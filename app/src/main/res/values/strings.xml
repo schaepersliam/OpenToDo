@@ -5,7 +5,8 @@
     <string name="todo_remove">-</string>
     <string name="remove_button_description">Remove button for ToDo\'s</string>
     <string name="add_new_todo">Add new todo</string>
-    <string name="alert_dialog_hint_text">Enter here!</string>
+    <string name="alert_dialog_hint_text">ToDo title</string>
     <string name="add_button_text">Add</string>
     <string name="clear_all_todos_text">clear all todo\'s</string>
+    <string name="alert_dialog_note">Add a note here</string>
 </resources>

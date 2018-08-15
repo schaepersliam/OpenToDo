@@ -96,18 +96,21 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
             public boolean onLongClick(View v) {
                 Log.e(LOG_TAG,"A clicked has been noticed!");
                 AddDialog = new Dialog(holder.itemView.getContext());
-                AddDialog.setContentView(R.layout.custom_alertdialog_add_todo);
+                AddDialog.setContentView(R.layout.custom_alertdialog_edit_todo);
                 AddDialog.setTitle("Change ToDo");
                 Button change_button = AddDialog.findViewById(R.id.dialog_add_todo);
                 final EditText editText = AddDialog.findViewById(R.id.todo_input_edit_text);
+                final EditText noteEditText = AddDialog.findViewById(R.id.todo_edit_note);
                 change_button.setText("Change");
                 editText.setText(currentItem.getText());
+                noteEditText.setText(currentItem.getNote());
                 editText.setSelection(currentItem.getText().length());
                 change_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         ContentValues values = new ContentValues();
                         values.put(Contract.Entry.COLUMN_TODO,editText.getText().toString());
+                        values.put(Contract.Entry.COLUMN_NOTE,noteEditText.getText().toString());
                         int updatedRow = holder.itemView.getContext().getContentResolver().update(currentItem.getUri(),values,null,null);
                         if (updatedRow == 0) {
                             Log.e(LOG_TAG,"Updating the item failed!");
@@ -115,6 +118,7 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
                             Log.e(LOG_TAG,"Updating the item succeeded!");
                         }
                         items.get(holder.getAdapterPosition()).setText(editText.getText().toString());
+                        items.get(holder.getAdapterPosition()).setNote(noteEditText.getText().toString());
                         EntryAdapter.this.notifyItemChanged(holder.getAdapterPosition(), "payload " + holder.getAdapterPosition());
                         AddDialog.dismiss();
                     }
