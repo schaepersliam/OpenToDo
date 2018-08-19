@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SQLiteHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "todos.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     SQLiteHelper(Context context) {
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -19,7 +19,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 + Contract.Entry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + Contract.Entry.COLUMN_TODO + " TEXT NOT NULL, "
                 + Contract.Entry.COLUMN_CHECKBOX + " INTEGER NOT NULL DEFAULT 0, "
-                + Contract.Entry.COLUMN_NOTE + " TEXT NOT NULL);";
+                + Contract.Entry.COLUMN_NOTE + " TEXT NOT NULL, "
+                + Contract.Entry.COLUMN_PRIORITY_STATE + " INTEGER NOT NULL DEFAULT 0);";
         db.execSQL(SQL_CREATE_TABLE);
     }
 

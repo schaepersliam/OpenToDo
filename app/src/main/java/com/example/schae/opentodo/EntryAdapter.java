@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.schae.opentodo.data.Contract;
@@ -98,19 +100,41 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
                 AddDialog = new Dialog(holder.itemView.getContext());
                 AddDialog.setContentView(R.layout.custom_alertdialog_edit_todo);
                 AddDialog.setTitle("Change ToDo");
-                Button change_button = AddDialog.findViewById(R.id.dialog_add_todo);
+                final Button change_button = AddDialog.findViewById(R.id.dialog_add_todo);
                 final EditText editText = AddDialog.findViewById(R.id.todo_input_edit_text);
                 final EditText noteEditText = AddDialog.findViewById(R.id.todo_edit_note);
+                final RadioButton priority_high = AddDialog.findViewById(R.id.change_radiobutton_1);
+                final RadioButton priority_mid = AddDialog.findViewById(R.id.change_radiobutton_2);
+                final RadioButton priority_low = AddDialog.findViewById(R.id.change_radiobutton_3);
+                final RadioGroup priority_group = AddDialog.findViewById(R.id.change_radio_group);
                 change_button.setText("Change");
                 editText.setText(currentItem.getText());
                 noteEditText.setText(currentItem.getNote());
                 editText.setSelection(currentItem.getText().length());
+                if (currentItem.getPriorityState() == 1) {
+                    priority_low.setChecked(true);
+                } else if (currentItem.getPriorityState() == 2) {
+                    priority_mid.setChecked(true);
+                } else if (currentItem.getPriorityState() == 3) {
+                    priority_high.setChecked(true);
+                }
                 change_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        int PriorityState = 0;
                         ContentValues values = new ContentValues();
                         values.put(Contract.Entry.COLUMN_TODO,editText.getText().toString());
                         values.put(Contract.Entry.COLUMN_NOTE,noteEditText.getText().toString());
+                        if (priority_group.getCheckedRadioButtonId() == priority_high.getId()) {
+                            values.put(Contract.Entry.COLUMN_PRIORITY_STATE,3);
+                            PriorityState = 3;
+                        } else if (priority_group.getCheckedRadioButtonId() == priority_mid.getId()) {
+                            values.put(Contract.Entry.COLUMN_PRIORITY_STATE,2);
+                            PriorityState = 2;
+                        } else if (priority_group.getCheckedRadioButtonId() == priority_low.getId()) {
+                            values.put(Contract.Entry.COLUMN_PRIORITY_STATE,1);
+                            PriorityState = 1;
+                        }
                         int updatedRow = holder.itemView.getContext().getContentResolver().update(currentItem.getUri(),values,null,null);
                         if (updatedRow == 0) {
                             Log.e(LOG_TAG,"Updating the item failed!");
@@ -119,7 +143,9 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
                         }
                         items.get(holder.getAdapterPosition()).setText(editText.getText().toString());
                         items.get(holder.getAdapterPosition()).setNote(noteEditText.getText().toString());
+                        items.get(holder.getAdapterPosition()).setPriorityState(PriorityState);
                         EntryAdapter.this.notifyItemChanged(holder.getAdapterPosition(), "payload " + holder.getAdapterPosition());
+                        Log.i(LOG_TAG,"Radio button id: " + priority_group.getCheckedRadioButtonId());
                         AddDialog.dismiss();
                     }
                 });

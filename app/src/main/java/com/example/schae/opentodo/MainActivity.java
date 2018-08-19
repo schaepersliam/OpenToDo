@@ -155,17 +155,18 @@ public class MainActivity extends AppCompatActivity {
             cursor.close();
         }
 
-        mList.add(new ItemInfo(newRowId,id,todo,"",false,false));
+        mList.add(new ItemInfo(newRowId,id,todo,"",0,false,false));
         adapter.notifyItemInserted(position);
     }
 
     public void refreshList() {
-        String[] projections = {Contract.Entry._ID, Contract.Entry.COLUMN_TODO, Contract.Entry.COLUMN_CHECKBOX, Contract.Entry.COLUMN_NOTE};
+        String[] projections = {Contract.Entry._ID, Contract.Entry.COLUMN_TODO, Contract.Entry.COLUMN_CHECKBOX, Contract.Entry.COLUMN_NOTE, Contract.Entry.COLUMN_PRIORITY_STATE};
         Cursor cursor = getContentResolver().query(Contract.Entry.CONTENT_URI,projections,null,null,null);
 
         int currentId;
         String currentText;
         String currentNote;
+        int currentPriorityState;
         int currentCheckStateInt;
         boolean currentCheckStateBool;
         Uri currentUri;
@@ -177,10 +178,11 @@ public class MainActivity extends AppCompatActivity {
                 currentCheckStateInt = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Entry.COLUMN_CHECKBOX));
                 currentUri = ContentUris.withAppendedId(Contract.Entry.CONTENT_URI,currentId);
                 currentNote = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Entry.COLUMN_NOTE));
+                currentPriorityState = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Entry.COLUMN_PRIORITY_STATE));
 
                 currentCheckStateBool = currentCheckStateInt == 1;
 
-                mList.add(new ItemInfo(currentUri, currentId, currentText, currentNote, currentCheckStateBool,false));
+                mList.add(new ItemInfo(currentUri, currentId, currentText, currentNote, currentPriorityState, currentCheckStateBool,false));
             }
             cursor.close();
         }

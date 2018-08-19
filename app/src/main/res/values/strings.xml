@@ -9,4 +9,7 @@
     <string name="add_button_text">Add</string>
     <string name="clear_all_todos_text">clear all todo\'s</string>
     <string name="alert_dialog_note">Add a note here</string>
+    <string name="content_description_priority_high">!!!</string>
+    <string name="content_description_priority_mid">!!</string>
+    <string name="content_description_priority_low">!</string>
 </resources>
