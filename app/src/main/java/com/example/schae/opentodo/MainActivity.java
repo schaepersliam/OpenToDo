@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     Dialog AddDialog;
     private EntryAdapter adapter;
     public static ArrayList<ItemInfo> mList;
+    private static String LOG_TAG = MainActivity.class.getSimpleName();
 
 
     @Override
@@ -141,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         ContentValues values = new ContentValues();
         values.put(Contract.Entry.COLUMN_TODO, todo);
         values.put(Contract.Entry.COLUMN_NOTE, "");
+        Log.e(LOG_TAG,"todo text: " + todo);
         Uri newRowId = getContentResolver().insert(Contract.Entry.CONTENT_URI,values);
 
 

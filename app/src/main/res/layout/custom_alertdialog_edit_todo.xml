@@ -74,6 +74,14 @@
             android:textSize="25sp"
             android:textColor="@color/colorAccent"/>
 
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/content_description_priority_low"
+            android:id="@+id/change_radiobutton_4"
+            android:textSize="25sp"
+            android:textColor="@color/colorAccent"/>
+
     </RadioGroup>
 
     <Button
