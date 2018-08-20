@@ -3,6 +3,7 @@ package com.example.schae.opentodo;
 import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         final Button add = findViewById(R.id.todo_add_button);
         final ImageButton remove = findViewById(R.id.remove_button);
         final ImageButton all_done = findViewById(R.id.clear_all_todos);
+        final ImageButton about_menu = findViewById(R.id.about_menu);
 
         DividerItemDecoration itemDecor = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
         itemDecor.setDrawable(recyclerView.getContext().getResources().getDrawable(R.drawable.divideritemdecoration));
@@ -120,6 +122,14 @@ public class MainActivity extends AppCompatActivity {
                     adapter.notifyItemRemoved(i);
                 }
                 Toast.makeText(MainActivity.this, "All ToDo's removed!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        about_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,AboutMenu.class);
+                MainActivity.this.startActivity(intent);
             }
         });
 

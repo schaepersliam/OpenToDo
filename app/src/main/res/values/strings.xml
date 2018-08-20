@@ -1,4 +1,4 @@
-<resources >
+<resources>
     <string name="app_name">OpenToDo</string>
     <string name="todo_input">Enter here please</string>
     <string name="todo_add">+</string>
@@ -12,4 +12,10 @@
     <string name="content_description_priority_high">!!!</string>
     <string name="content_description_priority_mid">!!</string>
     <string name="content_description_priority_low">!</string>
+    <string name="content_description_menu">Opens the menu</string>
+    <string name="about_1">Made with </string>
+    <string name="about_2">by Liam Schäpers</string>
+    <string name="about_3">in Germany</string>
+    <string name="about_license">©Mozilla Public License 2.0</string>
+    <string name="close_button">Close</string>
 </resources>
