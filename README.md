@@ -9,6 +9,24 @@ Big thank you
 
 Liam
 
+## Overview of the app
+Main page
+
+<img src="./content/scs_main.png" alt="drawing" width="325"/>
+
+Add a new ToDo
+
+<img src="./content/scs_add.png" alt="drawing" width="325"/>
+
+Mark a ToDo as done
+
+<img src="./content/scs_main_used.png" alt="drawing" width="325"/>
+
+Toggle menu for a ToDo for more options
+
+<img src="./content/scs_toggle_menu.png" alt="drawing" width="325"/>
+
+
 ## Coding in Kotlin
 If you would like to code in Kotlin, no problem! There is only one thing you have to do when creating a pull request. Please convert
 your code in Kotlin to Java with the build in converter in Android Studio. 
